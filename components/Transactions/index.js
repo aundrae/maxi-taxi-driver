@@ -25,11 +25,14 @@ export default class Transactions extends React.Component {
    *This method will also continue to update the data if there are any changes.
    */
   componentDidMount() {
-    // setInterval(()=>{
-    //     axios.get('http://checkin-checkout-backend.herokuapp.com/api/transactions').then(doc =>{
-    //     this.setState({ data: doc.data })
-    //     })
-    // },1000)
+    const temp=this.props.navigation.state.params.user.plate
+     const link='http://checkin-checkout-backend.herokuapp.com/api/transactions/driverID/'+temp
+      setInterval(()=>{
+         axios.get(link).then(doc =>{
+         this.setState({ data: doc.data })
+         })
+     },1000)
+
   }
 
   render() {

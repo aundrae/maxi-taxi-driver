@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Button,
 } from 'react-native';
+import * as firebase from 'firebase';
+import axios from 'axios';
+
 /**
  * This class renders the page that allows drivers to sign up for a new account.
  * This driver has to enter their email and password, first name, last name and maxi license plate number.
@@ -14,25 +17,68 @@ import {
  * If the sign up was successful the will be redirected to the login screen screen.
  */
 export default class SignUp extends React.Component {
+  state = {
+    fname: '',
+    lname: '',
+    email: '',
+    plate: '',
+    password: '',
+  };
+  /**
+   * This method attempts to create a new driver account with the information that the user input into in         the form.
+   * The the account is created, the app will post the driver's information to the Users datbase with the         accounts uid.
+   * If this is successful it will redirect the user to the login screen.
+   */
+  handleClick() {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(this.state.email, this.state.password);
+    firebase.auth().onAuthStateChanged(user => {
+      axios.post('https://checkin-checkout-backend.herokuapp.com/api/create', {
+        user: user.uid,
+        name: this.state.fname + ' ' + this.state.lname,
+        plate: this.state.plate,
+        wallet: 0,
+      });
+    });
+  }
   render() {
     return (
       <SafeAreaView style={styles.regForm}>
         <Text style={styles.header}>Registration</Text>
-        <TextInput style={styles.textinput} placeholder="First Name" />
-        <TextInput style={styles.textinput} placeholder="Last Name" />
-        <TextInput style={styles.textinput} placeholder="Licenese Plate" />
-        <TextInput style={styles.textinput} placeholder="Email" />
+        <TextInput
+          style={styles.textinput}
+          placeholder="First Name"
+          onChangeText={fname => this.setState({ fname })}
+        />
+        <TextInput
+          style={styles.textinput}
+          placeholder="Last Name"
+          onChangeText={lname => this.setState({ lname })}
+        />
+        <TextInput
+          style={styles.textinput}
+          placeholder="Licenese Plate"
+          onChangeText={plate => this.setState({ plate })}
+        />
+        <TextInput
+          style={styles.textinput}
+          placeholder="Email"
+          onChangeText={email => this.setState({ email })}
+        />
 
         <TextInput
           style={styles.textinput}
           secureTextEntry={true}
           placeholder="Password"
+          onChangeText={password => this.setState({ password })}
         />
 
         <TouchableOpacity style={styles.button}>
           <Button
             title="Sign Up"
             onPress={() => {
+              this.handleClick();
               this.props.navigation.navigate('SignIn');
             }}
           />

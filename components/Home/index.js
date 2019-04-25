@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View, StatusBar, Button } from 'react-native';
 import QRCode from 'react-native-qrcode';
 import { SafeAreaView } from 'react-navigation';
 import { Constants } from 'expo';
+import axios from 'axios'
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -14,7 +15,19 @@ export default class Home extends React.Component {
       },
     };
   }
-
+  /**
+   * Taking the information the login screen was sending, this method will get the drivers information            specifically the driver's name and maxi-taxis's plate identification
+   * This information will be stored in the driver_info object which will be used to create the QR Code.
+   */
+  componentWillMount(){
+      const temp=this.props.navigation.state.params.user.plate
+      axios.get('https://checkin-checkout-backend.herokuapp.com/api/plate/'+temp).then(doc=>{
+        this.setState({
+          driver_info: doc.data
+        })
+      })  
+    
+  }
   /**
    * This methods render's only the QR code on the main screen of the driver's app upon successful login.
    */
@@ -27,7 +40,7 @@ export default class Home extends React.Component {
          */}
         <QRCode
           value={
-            this.state.driver_info.name + ',' + this.state.driver_info.vehicle
+            this.state.driver_info.name + ',' + this.state.driver_info.plate
           }
           size={300}
           bgColor="black"

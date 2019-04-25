@@ -14,9 +14,29 @@ import {
   createStackNavigator,
   createAppContainer,
 } from 'react-navigation';
+import * as firebase from 'firebase'
+
+/**
+ * This is the firebase config keys to acces the project to create accounts
+ */
+var config = {
+    apiKey: "AIzaSyDkUHXPIpLCx9G6cMbrdE9h7nKyGlx9HhI",
+    authDomain: "express-demo-54676.firebaseapp.com",
+    databaseURL: "https://express-demo-54676.firebaseio.com",
+    projectId: "express-demo-54676",
+    storageBucket: "express-demo-54676.appspot.com",
+    messagingSenderId: "157079182412"
+  }
+/**
+ * This checks to see firebase was initalized or not.
+ * If it isn't it will be initalized.
+ */
+if(!firebase.apps.length)
+  firebase.initializeApp(config)
 
 /**
  * This function creates the tab navigtion that renders the main home screen, transaction screen and            wallet screen for the driver.
+ * These screen will only be accessible if the login was successful.
  */
 const AppNav = createAppContainer(
   createMaterialTopTabNavigator(
